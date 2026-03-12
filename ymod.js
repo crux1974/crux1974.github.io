@@ -53,24 +53,24 @@
         { key: 'popcorn', name: 'RT Audience (Popcorn)', default: true },
         { key: 'mdblist', name: 'MDBList Score', default: true },
         { key: 'letterboxd', name: 'Letterboxd', default: true },
-        { key: 'awards', name: 'Нагороди (Awards)', default: true }
+        { key: 'awards', name: 'РќР°РіРѕСЂРѕРґРё (Awards)', default: true }
     ];
 
     var countryNames = {
-        'us': 'США', 'usa': 'США', 'gb': 'Велика Британія', 'uk': 'Велика Британія',
-        'ua': 'Україна', 'ca': 'Канада', 'hk': 'Гонконг', 'fr': 'Франція',
-        'de': 'Німеччина', 'it': 'Італія', 'es': 'Іспанія', 'jp': 'Японія',
-        'kr': 'Південна Корея', 'cn': 'Китай', 'pl': 'Польща', 'au': 'Австралія',
-        'ie': 'Ірландія', 'be': 'Бельгія', 'dk': 'Данія', 'no': 'Норвегія',
-        'se': 'Швеція', 'fi': 'Фінляндія', 'tr': 'Туреччина', 'in': 'Індія',
-        'br': 'Бразилія', 'mx': 'Мексика', 'nl': 'Нідерланди', 'at': 'Австрія',
-        'ch': 'Швейцарія', 'cz': 'Чехія', 'hu': 'Угорщина', 'nz': 'Нова Зеландія',
-        'za': 'ПАР', 'il': 'Ізраїль', 'th': 'Таїланд', 'tw': 'Тайвань', 
-        'ru': 'Країна-агресор', 'pt': 'Португалія', 'gr': 'Греція',
-        'is': 'Ісландія', 'ro': 'Румунія', 'bg': 'Болгарія',
-        'ar': 'Аргентина', 'cl': 'Чилі', 'co': 'Колумбія', 'pe': 'Перу',
-        'id': 'Індонезія', 'my': 'Малайзія', 'ph': 'Філіппіни', 'sg': 'Сінгапур',
-        'vn': 'В\'єтнам', 'ae': 'ОАЕ', 'sa': 'Саудівська Аравія', 'eg': 'Єгипет'
+        'us': 'РЎРЁРђ', 'usa': 'РЎРЁРђ', 'gb': 'Р’РµР»РёРєР° Р‘СЂРёС‚Р°РЅС–СЏ', 'uk': 'Р’РµР»РёРєР° Р‘СЂРёС‚Р°РЅС–СЏ',
+        'ua': 'РЈРєСЂР°С—РЅР°', 'ca': 'РљР°РЅР°РґР°', 'hk': 'Р“РѕРЅРєРѕРЅРі', 'fr': 'Р¤СЂР°РЅС†С–СЏ',
+        'de': 'РќС–РјРµС‡С‡РёРЅР°', 'it': 'Р†С‚Р°Р»С–СЏ', 'es': 'Р†СЃРїР°РЅС–СЏ', 'jp': 'РЇРїРѕРЅС–СЏ',
+        'kr': 'РџС–РІРґРµРЅРЅР° РљРѕСЂРµСЏ', 'cn': 'РљРёС‚Р°Р№', 'pl': 'РџРѕР»СЊС‰Р°', 'au': 'РђРІСЃС‚СЂР°Р»С–СЏ',
+        'ie': 'Р†СЂР»Р°РЅРґС–СЏ', 'be': 'Р‘РµР»СЊРіС–СЏ', 'dk': 'Р”Р°РЅС–СЏ', 'no': 'РќРѕСЂРІРµРіС–СЏ',
+        'se': 'РЁРІРµС†С–СЏ', 'fi': 'Р¤С–РЅР»СЏРЅРґС–СЏ', 'tr': 'РўСѓСЂРµС‡С‡РёРЅР°', 'in': 'Р†РЅРґС–СЏ',
+        'br': 'Р‘СЂР°Р·РёР»С–СЏ', 'mx': 'РњРµРєСЃРёРєР°', 'nl': 'РќС–РґРµСЂР»Р°РЅРґРё', 'at': 'РђРІСЃС‚СЂС–СЏ',
+        'ch': 'РЁРІРµР№С†Р°СЂС–СЏ', 'cz': 'Р§РµС…С–СЏ', 'hu': 'РЈРіРѕСЂС‰РёРЅР°', 'nz': 'РќРѕРІР° Р—РµР»Р°РЅРґС–СЏ',
+        'za': 'РџРђР ', 'il': 'Р†Р·СЂР°С—Р»СЊ', 'th': 'РўР°С—Р»Р°РЅРґ', 'tw': 'РўР°Р№РІР°РЅСЊ', 
+        'ru': 'РљСЂР°С—РЅР°-Р°РіСЂРµСЃРѕСЂ', 'pt': 'РџРѕСЂС‚СѓРіР°Р»С–СЏ', 'gr': 'Р“СЂРµС†С–СЏ',
+        'is': 'Р†СЃР»Р°РЅРґС–СЏ', 'ro': 'Р СѓРјСѓРЅС–СЏ', 'bg': 'Р‘РѕР»РіР°СЂС–СЏ',
+        'ar': 'РђСЂРіРµРЅС‚РёРЅР°', 'cl': 'Р§РёР»С–', 'co': 'РљРѕР»СѓРјР±С–СЏ', 'pe': 'РџРµСЂСѓ',
+        'id': 'Р†РЅРґРѕРЅРµР·С–СЏ', 'my': 'РњР°Р»Р°Р№Р·С–СЏ', 'ph': 'Р¤С–Р»С–РїРїС–РЅРё', 'sg': 'РЎС–РЅРіР°РїСѓСЂ',
+        'vn': 'Р’\'С”С‚РЅР°Рј', 'ae': 'РћРђР•', 'sa': 'РЎР°СѓРґС–РІСЃСЊРєР° РђСЂР°РІС–СЏ', 'eg': 'Р„РіРёРїРµС‚'
     };
 
     var titleCache = Lampa.Storage.get("title_cache_hybrid_v3") || {};
@@ -211,7 +211,7 @@
             var content = head_elem.html();
             if (content) {
                 head_elem.hide();
-                if (details_elem.children().length > 0) details_elem.append('<span class="full-start-new__split logo-moved-separator">●</span>');
+                if (details_elem.children().length > 0) details_elem.append('<span class="full-start-new__split logo-moved-separator">в—Џ</span>');
                 details_elem.append('<span class="logo-moved-head">' + content + "</span>");
             }
         }
@@ -307,7 +307,7 @@
         var details = [];
         if (year && year !== "undefined") details.push(year);
         if (country && country !== "undefined") details.push(country);
-        var secondaryInfo = details.length > 0 ? ' • ' + details.join(' • ') : '';
+        var secondaryInfo = details.length > 0 ? ' вЂў ' + details.join(' вЂў ') : '';
 
         var html = '<div class="plugin-hybrid-title"><div class="plugin-hybrid-title__body">' +
             '<span style="font-size: ' + currentSize.title + '; color: #fff; opacity: 0.8;">' + displayTitle + '</span>' + 
@@ -511,7 +511,7 @@
         if (!render) return;
         $(".plugin-uk-title-combined", render).remove();
         
-        // Зчитуємо налаштування ДО циклу, щоб використати їх при генерації HTML
+        // Р—С‡РёС‚СѓС”РјРѕ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ Р”Рћ С†РёРєР»Сѓ, С‰РѕР± РІРёРєРѕСЂРёСЃС‚Р°С‚Рё С—С… РїСЂРё РіРµРЅРµСЂР°С†С–С— HTML
         var showBg = Lampa.Storage.get("studio_logo_bg", true);
         var sizeEm = Lampa.Storage.get("studio_logo_size", '0.7em');
         var gapEm = Lampa.Storage.get("studio_logo_gap", '0.2em');
@@ -523,18 +523,18 @@
             companies.forEach(function (co, index) {
                 var content = co.logo_path ? '<img src="https://image.tmdb.org/t/p/h100' + co.logo_path + '" title="' + co.name + '" crossorigin="anonymous" class="studio-img-check">' : '<span class="studio-logo-text">' + co.name + '</span>';
                 
-                // Якщо підкладка вимкнена і це не перше лого — додаємо буліт
+                // РЇРєС‰Рѕ РїС–РґРєР»Р°РґРєР° РІРёРјРєРЅРµРЅР° С– С†Рµ РЅРµ РїРµСЂС€Рµ Р»РѕРіРѕ вЂ” РґРѕРґР°С”РјРѕ Р±СѓР»С–С‚
                 if (!showBg && index > 0) {
-                    html += '<span style="color: rgba(255,255,255,0.4); margin: 0 ' + gapEm + '; font-size: 0.6em; display: inline-flex; align-items: center;">●</span>';
+                    html += '<span style="color: rgba(255,255,255,0.4); margin: 0 ' + gapEm + '; font-size: 0.6em; display: inline-flex; align-items: center;">в—Џ</span>';
                 }
 
-                // Прибрано клас 'selector', щоб не перехоплювати фокус одразу під час рендеру сторінки
+                // РџСЂРёР±СЂР°РЅРѕ РєР»Р°СЃ 'selector', С‰РѕР± РЅРµ РїРµСЂРµС…РѕРїР»СЋРІР°С‚Рё С„РѕРєСѓСЃ РѕРґСЂР°Р·Сѓ РїС–Рґ С‡Р°СЃ СЂРµРЅРґРµСЂСѓ СЃС‚РѕСЂС–РЅРєРё
                 html += '<div class="rate--studio studio-logo ymod-studio-item" data-id="' + co.id + '" data-name="' + co.name + '" style="display: inline-flex; vertical-align: middle;">' + content + '</div>';
             });
         }
         if (!html) return;
 
-        // Змінюємо стилі. Якщо підкладки немає, відступи між елементами бере на себе буліт (margin-right прибираємо)
+        // Р—РјС–РЅСЋС”РјРѕ СЃС‚РёР»С–. РЇРєС‰Рѕ РїС–РґРєР»Р°РґРєРё РЅРµРјР°С”, РІС–РґСЃС‚СѓРїРё РјС–Р¶ РµР»РµРјРµРЅС‚Р°РјРё Р±РµСЂРµ РЅР° СЃРµР±Рµ Р±СѓР»С–С‚ (margin-right РїСЂРёР±РёСЂР°С”РјРѕ)
         var bgCSS = showBg 
             ? 'background: rgba(255,255,255,0.08) !important; padding: 5px 12px !important; margin-right: ' + gapEm + ' !important;' 
             : 'background: transparent !important; border: none !important; padding: 5px 0px !important; margin-bottom: 0.2em !important;';
@@ -603,7 +603,7 @@
 
     function getBestAndPopular(results, movie) {
         if (!results || !Array.isArray(results)) return { ukr: false };
-        var ukrPattern = /(ukr|ua|ukrainian|українськ|укр|[^a-z]uk[^a-z])/i;
+        var ukrPattern = /(ukr|ua|ukrainian|СѓРєСЂР°С—РЅСЃСЊРє|СѓРєСЂ|[^a-z]uk[^a-z])/i;
         var ukrResults = [];
         var movieYear = parseInt(movie.release_date || movie.first_air_date || movie.year || 0);
 
@@ -616,7 +616,7 @@
                     if (!correctYear) return;
                 }
             }
-            var titleClean = title.replace(/(укр[а-яієґї]*|ukr[a-z]*|ua|ukrainian)[\s\.\,\_\-\|]*(sub|суб)[a-zа-яієґї]*/ig, '').replace(/(sub|суб)[a-zа-яієґї]*[\s\.\,\_\-\|]*(укр[а-яієґї]*|ukr[a-z]*|ua|ukrainian)/ig, '');
+            var titleClean = title.replace(/(СѓРєСЂ[Р°-СЏС–С”Т‘С—]*|ukr[a-z]*|ua|ukrainian)[\s\.\,\_\-\|]*(sub|СЃСѓР±)[a-zР°-СЏС–С”Т‘С—]*/ig, '').replace(/(sub|СЃСѓР±)[a-zР°-СЏС–С”Т‘С—]*[\s\.\,\_\-\|]*(СѓРєСЂ[Р°-СЏС–С”Т‘С—]*|ukr[a-z]*|ua|ukrainian)/ig, '');
             var hasUkr = ukrPattern.test(titleClean);
 
             if (!hasUkr && item.ffprobe && Array.isArray(item.ffprobe)) {
@@ -687,7 +687,7 @@
         
         if (!data.ukr) {
             var iconHtml = (saturation === '0%') ? '<span class="qb-text-icon">UA</span>' : '<img src="'+uatorIcons.none+'" class="qb-prefix-icon" style="filter: saturate('+saturation+')">';
-            block.append('<div class="quality-badge qb-not-found">' + iconHtml + '<span class="qb-text">немає</span></div>');
+            block.append('<div class="quality-badge qb-not-found">' + iconHtml + '<span class="qb-text">РЅРµРјР°С”</span></div>');
         } else {
             var items = [ {i: uatorIcons.ua, t: data.bestRes, type: 'ua'}, {i: uatorIcons.top, t: data.popRes}, {i: uatorIcons.seeds, t: data.popSeeds} ];
             if (data.tech.audio) items.push({i: uatorIcons.audio, t: data.tech.audio});
@@ -774,11 +774,11 @@
     function createSettings() {
         var MAIN_C = 'yariks_mod_main';
         Lampa.SettingsApi.addComponent({ component: MAIN_C, name: "Yarik's Mod", icon: yIcon });
-        Lampa.SettingsApi.addComponent({ component: 'ym_logo', name: 'Лого (Smart)' });
-        Lampa.SettingsApi.addComponent({ component: 'ym_title', name: 'Додаткова назва' });
+        Lampa.SettingsApi.addComponent({ component: 'ym_logo', name: 'Р›РѕРіРѕ (Smart)' });
+        Lampa.SettingsApi.addComponent({ component: 'ym_title', name: 'Р”РѕРґР°С‚РєРѕРІР° РЅР°Р·РІР°' });
         Lampa.SettingsApi.addComponent({ component: 'ym_ratings', name: 'OMDB & MDBList' });
-        Lampa.SettingsApi.addComponent({ component: 'ym_ratings_select', name: 'Вибір рейтингів' });
-        Lampa.SettingsApi.addComponent({ component: 'ym_studios', name: 'Лого студій' });
+        Lampa.SettingsApi.addComponent({ component: 'ym_ratings_select', name: 'Р’РёР±С–СЂ СЂРµР№С‚РёРЅРіС–РІ' });
+        Lampa.SettingsApi.addComponent({ component: 'ym_studios', name: 'Р›РѕРіРѕ СЃС‚СѓРґС–Р№' });
         Lampa.SettingsApi.addComponent({ component: 'ym_uator', name: 'Uator' });
 
         function addStatic(comp, name, title, desc, onClick) {
@@ -791,81 +791,81 @@
             Lampa.SettingsApi.addParam({ component: comp, param: { name: name, type: "select", values: values, default: def }, field: { name: title, description: desc } });
         }
         function backTo(comp, target) {
-            addStatic(comp, comp+'_back', "Назад", "Повернутися", function() { Lampa.Settings.create(target); });
+            addStatic(comp, comp+'_back', "РќР°Р·Р°Рґ", "РџРѕРІРµСЂРЅСѓС‚РёСЃСЏ", function() { Lampa.Settings.create(target); });
         }
         function clearCacheBtn(comp, title, prefix) {
-            addStatic(comp, comp+'_clear', title, "Очистити кеш плагіну", function() {
+            addStatic(comp, comp+'_clear', title, "РћС‡РёСЃС‚РёС‚Рё РєРµС€ РїР»Р°РіС–РЅСѓ", function() {
                 for (var i = 0; i < localStorage.length; i++) {
                     var key = localStorage.key(i);
                     if (key && key.indexOf(prefix) !== -1) { localStorage.removeItem(key); i--; }
                 }
-                Lampa.Noty.show("Кеш очищено. Перезавантаження...");
+                Lampa.Noty.show("РљРµС€ РѕС‡РёС‰РµРЅРѕ. РџРµСЂРµР·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ...");
                 setTimeout(function() { window.location.reload(); }, 1000);
             });
         }
 
-        addStatic(MAIN_C, "ym_info_link", "Інформація + Подякувати", "http://lampalampa.free.nf", function() { window.open('http://lampalampa.free.nf', '_blank'); });
-        addToggle(MAIN_C, 'slogan', "Приховування слогану", "Прибрати короткі слогани під назвою");
+        addStatic(MAIN_C, "ym_info_link", "Р†РЅС„РѕСЂРјР°С†С–СЏ + РџРѕРґСЏРєСѓРІР°С‚Рё", "http://lampalampa.free.nf", function() { window.open('http://lampalampa.free.nf', '_blank'); });
+        addToggle(MAIN_C, 'slogan', "РџСЂРёС…РѕРІСѓРІР°РЅРЅСЏ СЃР»РѕРіР°РЅСѓ", "РџСЂРёР±СЂР°С‚Рё РєРѕСЂРѕС‚РєС– СЃР»РѕРіР°РЅРё РїС–Рґ РЅР°Р·РІРѕСЋ");
         
-        addStatic(MAIN_C, "ym_logo_entry", "Лого (Smart)", "Налаштування заміни тексту на лого", function() { Lampa.Settings.create('ym_logo'); });
+        addStatic(MAIN_C, "ym_logo_entry", "Р›РѕРіРѕ (Smart)", "РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ Р·Р°РјС–РЅРё С‚РµРєСЃС‚Сѓ РЅР° Р»РѕРіРѕ", function() { Lampa.Settings.create('ym_logo'); });
         backTo('ym_logo', MAIN_C);
-        addToggle('ym_logo', 'logo', "Увімкнути плагін", "Відображати графічні логотипи");
-        addSelect('ym_logo', "logo_glav", "Режим заміни", "", { 1: "Показати назву", 0: "Показати лого" }, "0");
-        addSelect('ym_logo', "logo_lang", "Мова логотипа", "Пріоритет мови", { "": "Як у Lampa", en: "English", uk: "Українська" }, "uk");
-        addSelect('ym_logo', "logo_size", "Якість (Розмір)", "", { w300: "w300", w500: "w500", w780: "w780", original: "Оригінал" }, "original");
-        addSelect('ym_logo', "logo_saturation", "Насиченість", "", { "1": "100%", "0.75": "75%", "0.5": "50%", "0.25": "25%", "0": "0% (Ч/Б)" }, "1");
-        Lampa.SettingsApi.addParam({ component: 'ym_logo', param: { name: "logo_use_text_height", type: "trigger", default: false }, field: { name: "Лого по висоті тексту", description: "Масштабувати під розмір шрифту" } });
-        clearCacheBtn('ym_logo', "Очистити кеш логотипів", "logo_cache_v2_");
+        addToggle('ym_logo', 'logo', "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РіС–РЅ", "Р’С–РґРѕР±СЂР°Р¶Р°С‚Рё РіСЂР°С„С–С‡РЅС– Р»РѕРіРѕС‚РёРїРё");
+        addSelect('ym_logo', "logo_glav", "Р РµР¶РёРј Р·Р°РјС–РЅРё", "", { 1: "РџРѕРєР°Р·Р°С‚Рё РЅР°Р·РІСѓ", 0: "РџРѕРєР°Р·Р°С‚Рё Р»РѕРіРѕ" }, "0");
+        addSelect('ym_logo', "logo_lang", "РњРѕРІР° Р»РѕРіРѕС‚РёРїР°", "РџСЂС–РѕСЂРёС‚РµС‚ РјРѕРІРё", { "": "РЇРє Сѓ Lampa", en: "English", uk: "РЈРєСЂР°С—РЅСЃСЊРєР°" }, "uk");
+        addSelect('ym_logo', "logo_size", "РЇРєС–СЃС‚СЊ (Р РѕР·РјС–СЂ)", "", { w300: "w300", w500: "w500", w780: "w780", original: "РћСЂРёРіС–РЅР°Р»" }, "original");
+        addSelect('ym_logo', "logo_saturation", "РќР°СЃРёС‡РµРЅС–СЃС‚СЊ", "", { "1": "100%", "0.75": "75%", "0.5": "50%", "0.25": "25%", "0": "0% (Р§/Р‘)" }, "1");
+        Lampa.SettingsApi.addParam({ component: 'ym_logo', param: { name: "logo_use_text_height", type: "trigger", default: false }, field: { name: "Р›РѕРіРѕ РїРѕ РІРёСЃРѕС‚С– С‚РµРєСЃС‚Сѓ", description: "РњР°СЃС€С‚Р°Р±СѓРІР°С‚Рё РїС–Рґ СЂРѕР·РјС–СЂ С€СЂРёС„С‚Сѓ" } });
+        clearCacheBtn('ym_logo', "РћС‡РёСЃС‚РёС‚Рё РєРµС€ Р»РѕРіРѕС‚РёРїС–РІ", "logo_cache_v2_");
 
-        addStatic(MAIN_C, "ym_title_entry", "Додаткова назва", "Оригінальна назва, рік, країна", function() { Lampa.Settings.create('ym_title'); });
+        addStatic(MAIN_C, "ym_title_entry", "Р”РѕРґР°С‚РєРѕРІР° РЅР°Р·РІР°", "РћСЂРёРіС–РЅР°Р»СЊРЅР° РЅР°Р·РІР°, СЂС–Рє, РєСЂР°С—РЅР°", function() { Lampa.Settings.create('ym_title'); });
         backTo('ym_title', MAIN_C);
-        addToggle('ym_title', 'hybrid', "Увімкнути плагін", "Відображати додаткову інформацію");
-        addSelect('ym_title', "hybrid_title_mode", "Режим", "", { 'smart': 'Залежно від лого', 'always_ua': 'Завжди українська' }, 'smart');
-        addSelect('ym_title', "hybrid_title_size", "Розмір", "", { 'xs': 'Дуже мала', 's': 'Мала', 'm': 'Нормальна (стандарт)', 'l': 'Велика', 'xl': 'Дуже велика', 'xxl': 'Максимальна', 'giant': 'Гігантська' }, 'xs');
-        clearCacheBtn('ym_title', "Очистити кеш назв", "title_cache_hybrid_v3");
+        addToggle('ym_title', 'hybrid', "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РіС–РЅ", "Р’С–РґРѕР±СЂР°Р¶Р°С‚Рё РґРѕРґР°С‚РєРѕРІСѓ С–РЅС„РѕСЂРјР°С†С–СЋ");
+        addSelect('ym_title', "hybrid_title_mode", "Р РµР¶РёРј", "", { 'smart': 'Р—Р°Р»РµР¶РЅРѕ РІС–Рґ Р»РѕРіРѕ', 'always_ua': 'Р—Р°РІР¶РґРё СѓРєСЂР°С—РЅСЃСЊРєР°' }, 'smart');
+        addSelect('ym_title', "hybrid_title_size", "Р РѕР·РјС–СЂ", "", { 'xs': 'Р”СѓР¶Рµ РјР°Р»Р°', 's': 'РњР°Р»Р°', 'm': 'РќРѕСЂРјР°Р»СЊРЅР° (СЃС‚Р°РЅРґР°СЂС‚)', 'l': 'Р’РµР»РёРєР°', 'xl': 'Р”СѓР¶Рµ РІРµР»РёРєР°', 'xxl': 'РњР°РєСЃРёРјР°Р»СЊРЅР°', 'giant': 'Р“С–РіР°РЅС‚СЃСЊРєР°' }, 'xs');
+        clearCacheBtn('ym_title', "РћС‡РёСЃС‚РёС‚Рё РєРµС€ РЅР°Р·РІ", "title_cache_hybrid_v3");
 
-        addStatic(MAIN_C, "ym_ratings_entry", "Рейтинги (OMDB/MDBList)", "Налаштування додаткових оцінок", function() { Lampa.Settings.create('ym_ratings'); });
+        addStatic(MAIN_C, "ym_ratings_entry", "Р РµР№С‚РёРЅРіРё (OMDB/MDBList)", "РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РґРѕРґР°С‚РєРѕРІРёС… РѕС†С–РЅРѕРє", function() { Lampa.Settings.create('ym_ratings'); });
         backTo('ym_ratings', MAIN_C);
-        addToggle('ym_ratings', 'ratings', "Увімкнути плагін", "Відображати зовнішні рейтинги");
+        addToggle('ym_ratings', 'ratings', "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РіС–РЅ", "Р’С–РґРѕР±СЂР°Р¶Р°С‚Рё Р·РѕРІРЅС–С€РЅС– СЂРµР№С‚РёРЅРіРё");
         
-        Lampa.SettingsApi.addParam({ component: 'ym_ratings', param: { name: "omdb_api_key_set", type: "static" }, field: { name: "OMDB API Key", description: "Встановити ключ" }, onRender: function (item) {
-            var valEl = $('<div class="omdb-api-val">' + (Lampa.Storage.get('omdb_api_key', '') || 'Не встановлено') + '</div>');
+        Lampa.SettingsApi.addParam({ component: 'ym_ratings', param: { name: "omdb_api_key_set", type: "static" }, field: { name: "OMDB API Key", description: "Р’СЃС‚Р°РЅРѕРІРёС‚Рё РєР»СЋС‡" }, onRender: function (item) {
+            var valEl = $('<div class="omdb-api-val">' + (Lampa.Storage.get('omdb_api_key', '') || 'РќРµ РІСЃС‚Р°РЅРѕРІР»РµРЅРѕ') + '</div>');
             item.find('.settings-param__descr').after(valEl);
             item.on('hover:enter', function() {
-                Lampa.Input.edit({ title: 'OMDB API Key', value: Lampa.Storage.get('omdb_api_key', ''), free: true, nosave: true }, function(newValue) { Lampa.Storage.set('omdb_api_key', newValue); valEl.text(newValue || 'Не встановлено'); });
+                Lampa.Input.edit({ title: 'OMDB API Key', value: Lampa.Storage.get('omdb_api_key', ''), free: true, nosave: true }, function(newValue) { Lampa.Storage.set('omdb_api_key', newValue); valEl.text(newValue || 'РќРµ РІСЃС‚Р°РЅРѕРІР»РµРЅРѕ'); });
             });
         }});
-        Lampa.SettingsApi.addParam({ component: 'ym_ratings', param: { name: "mdblist_api_key_set", type: "static" }, field: { name: "MDBList API Key", description: "Встановити ключ" }, onRender: function (item) {
-            var valEl = $('<div class="omdb-api-val">' + (Lampa.Storage.get('omdb_mdblist_api_key', '') || 'Не встановлено') + '</div>');
+        Lampa.SettingsApi.addParam({ component: 'ym_ratings', param: { name: "mdblist_api_key_set", type: "static" }, field: { name: "MDBList API Key", description: "Р’СЃС‚Р°РЅРѕРІРёС‚Рё РєР»СЋС‡" }, onRender: function (item) {
+            var valEl = $('<div class="omdb-api-val">' + (Lampa.Storage.get('omdb_mdblist_api_key', '') || 'РќРµ РІСЃС‚Р°РЅРѕРІР»РµРЅРѕ') + '</div>');
             item.find('.settings-param__descr').after(valEl);
             item.on('hover:enter', function() {
-                Lampa.Input.edit({ title: 'MDBList API Key', value: Lampa.Storage.get('omdb_mdblist_api_key', ''), free: true, nosave: true }, function(newValue) { Lampa.Storage.set('omdb_mdblist_api_key', newValue); valEl.text(newValue || 'Не встановлено'); });
+                Lampa.Input.edit({ title: 'MDBList API Key', value: Lampa.Storage.get('omdb_mdblist_api_key', ''), free: true, nosave: true }, function(newValue) { Lampa.Storage.set('omdb_mdblist_api_key', newValue); valEl.text(newValue || 'РќРµ РІСЃС‚Р°РЅРѕРІР»РµРЅРѕ'); });
             });
         }});
-        addSelect('ym_ratings', 'omdb_rating_size', 'Розмір рейтингів', '', { '0.5em': 'XS', '0.8em': 'S', '1.1em': 'M (Стандарт)', '1.5em': 'L', '2.0em': 'XL' }, '1.1em');
-        addSelect('ym_ratings', 'omdb_rating_gap', 'Відстань між рейтингами', '', { '0px': '0', '0.2em': '0.2em', '0.5em': '0.5em (Стандарт)', '1em': '1em', '1.5em': '1.5em', '2em': '2em' }, '0.5em');
-        addSelect('ym_ratings', 'omdb_rating_margin', 'Відступ до інших рядків', '', { '-1em': '-1em', '-0.5em': '-0.5em', '0px': '0', '10px': '10px (Стандарт)', '0.5em': '0.5em', '1em': '1em', '1.5em': '1.5em', '2em': '2em' }, '10px');
-        addSelect('ym_ratings', 'omdb_rating_saturation', 'Насиченість', '', { '100%': '100% (Стандарт)', '75%': '75%', '50%': '50%', '25%': '25%', '0%': '0% (Ч/Б)' }, '75%');
-        addStatic('ym_ratings', "omdb_select_ratings", "Вибір рейтингів", "Вкл/Викл джерел", function() { Lampa.Settings.create('ym_ratings_select'); });
+        addSelect('ym_ratings', 'omdb_rating_size', 'Р РѕР·РјС–СЂ СЂРµР№С‚РёРЅРіС–РІ', '', { '0.5em': 'XS', '0.8em': 'S', '1.1em': 'M (РЎС‚Р°РЅРґР°СЂС‚)', '1.5em': 'L', '2.0em': 'XL' }, '1.1em');
+        addSelect('ym_ratings', 'omdb_rating_gap', 'Р’С–РґСЃС‚Р°РЅСЊ РјС–Р¶ СЂРµР№С‚РёРЅРіР°РјРё', '', { '0px': '0', '0.2em': '0.2em', '0.5em': '0.5em (РЎС‚Р°РЅРґР°СЂС‚)', '1em': '1em', '1.5em': '1.5em', '2em': '2em' }, '0.5em');
+        addSelect('ym_ratings', 'omdb_rating_margin', 'Р’С–РґСЃС‚СѓРї РґРѕ С–РЅС€РёС… СЂСЏРґРєС–РІ', '', { '-1em': '-1em', '-0.5em': '-0.5em', '0px': '0', '10px': '10px (РЎС‚Р°РЅРґР°СЂС‚)', '0.5em': '0.5em', '1em': '1em', '1.5em': '1.5em', '2em': '2em' }, '10px');
+        addSelect('ym_ratings', 'omdb_rating_saturation', 'РќР°СЃРёС‡РµРЅС–СЃС‚СЊ', '', { '100%': '100% (РЎС‚Р°РЅРґР°СЂС‚)', '75%': '75%', '50%': '50%', '25%': '25%', '0%': '0% (Р§/Р‘)' }, '75%');
+        addStatic('ym_ratings', "omdb_select_ratings", "Р’РёР±С–СЂ СЂРµР№С‚РёРЅРіС–РІ", "Р’РєР»/Р’РёРєР» РґР¶РµСЂРµР»", function() { Lampa.Settings.create('ym_ratings_select'); });
         
         backTo('ym_ratings_select', 'ym_ratings');
         availableRatings.forEach(function(rating) {
             Lampa.SettingsApi.addParam({ component: 'ym_ratings_select', param: { name: 'omdb_rating_toggle_' + rating.key, type: 'trigger', default: rating.default }, field: { name: rating.name } });
         });
 
-        addStatic(MAIN_C, "ym_studios_entry", "Лого студій", "Відображення виробничих компаній", function() { Lampa.Settings.create('ym_studios'); });
+        addStatic(MAIN_C, "ym_studios_entry", "Р›РѕРіРѕ СЃС‚СѓРґС–Р№", "Р’С–РґРѕР±СЂР°Р¶РµРЅРЅСЏ РІРёСЂРѕР±РЅРёС‡РёС… РєРѕРјРїР°РЅС–Р№", function() { Lampa.Settings.create('ym_studios'); });
         backTo('ym_studios', MAIN_C);
-        addToggle('ym_studios', 'studios', "Увімкнути плагін", "Відображати логотипи студій");
-        Lampa.SettingsApi.addParam({ component: 'ym_studios', param: { name: "studio_logo_bg", type: "trigger", default: true }, field: { name: "Підложка", description: "Напівпрозорий фон за логотипом" } });
-        addSelect('ym_studios', "studio_logo_size", "Розмір лого", "", { '0.5em':'0.5em', '0.6em':'0.6em', '0.7em':'0.7em (Стандарт)', '0.8em':'0.8em', '0.9em':'0.9em', '1.0em':'1.0em', '1.1em':'1.1em', '1.3em':'1.3em', '1.5em':'1.5em', '2.0em':'2.0em', '2.5em':'2.5em' }, '0.7em');
-        addSelect('ym_studios', "studio_logo_gap", "Відступ між лого", "", { '0px':'0', '0.2em':'0.2em', '0.5em':'0.5em', '1.0em':'1.0em', '1.2em':'1.2em', '1.5em':'1.5em', '2.0em':'2.0em' }, '0.2em');
-        addSelect('ym_studios', "studio_logo_saturation", "Насиченість", "", { '1': '100%', '0.75': '75%', '0.5': '50%', '0.25': '25%', '0': '0% (Ч/Б)' }, '1');
+        addToggle('ym_studios', 'studios', "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РіС–РЅ", "Р’С–РґРѕР±СЂР°Р¶Р°С‚Рё Р»РѕРіРѕС‚РёРїРё СЃС‚СѓРґС–Р№");
+        Lampa.SettingsApi.addParam({ component: 'ym_studios', param: { name: "studio_logo_bg", type: "trigger", default: true }, field: { name: "РџС–РґР»РѕР¶РєР°", description: "РќР°РїС–РІРїСЂРѕР·РѕСЂРёР№ С„РѕРЅ Р·Р° Р»РѕРіРѕС‚РёРїРѕРј" } });
+        addSelect('ym_studios', "studio_logo_size", "Р РѕР·РјС–СЂ Р»РѕРіРѕ", "", { '0.5em':'0.5em', '0.6em':'0.6em', '0.7em':'0.7em (РЎС‚Р°РЅРґР°СЂС‚)', '0.8em':'0.8em', '0.9em':'0.9em', '1.0em':'1.0em', '1.1em':'1.1em', '1.3em':'1.3em', '1.5em':'1.5em', '2.0em':'2.0em', '2.5em':'2.5em' }, '0.7em');
+        addSelect('ym_studios', "studio_logo_gap", "Р’С–РґСЃС‚СѓРї РјС–Р¶ Р»РѕРіРѕ", "", { '0px':'0', '0.2em':'0.2em', '0.5em':'0.5em', '1.0em':'1.0em', '1.2em':'1.2em', '1.5em':'1.5em', '2.0em':'2.0em' }, '0.2em');
+        addSelect('ym_studios', "studio_logo_saturation", "РќР°СЃРёС‡РµРЅС–СЃС‚СЊ", "", { '1': '100%', '0.75': '75%', '0.5': '50%', '0.25': '25%', '0': '0% (Р§/Р‘)' }, '1');
 
-        addStatic(MAIN_C, "ym_uator_entry", "Uator", "Налаштування маркерів UA контенту", function() { Lampa.Settings.create('ym_uator'); });
+        addStatic(MAIN_C, "ym_uator_entry", "Uator", "РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РјР°СЂРєРµСЂС–РІ UA РєРѕРЅС‚РµРЅС‚Сѓ", function() { Lampa.Settings.create('ym_uator'); });
         backTo('ym_uator', MAIN_C);
-        addToggle('ym_uator', 'uator', "Увімкнути плагін", "Відображати значки торрентів");
-        addSelect('ym_uator', 'uator_saturation', 'Насиченість', '', { '100%': '100% (Стандарт)', '75%': '75%', '50%': '50%', '25%': '25%', '0%': '0% (Ч/Б)' }, '100%');
-        addSelect('ym_uator', 'uator_rating_size', 'Розмір значків', '', { '0.5em': 'XS', '0.8em': 'S', '1.1em': 'M (Стандарт)', '1.5em': 'L', '2.0em': 'XL' }, '1.1em');
+        addToggle('ym_uator', 'uator', "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РіС–РЅ", "Р’С–РґРѕР±СЂР°Р¶Р°С‚Рё Р·РЅР°С‡РєРё С‚РѕСЂСЂРµРЅС‚С–РІ");
+        addSelect('ym_uator', 'uator_saturation', 'РќР°СЃРёС‡РµРЅС–СЃС‚СЊ', '', { '100%': '100% (РЎС‚Р°РЅРґР°СЂС‚)', '75%': '75%', '50%': '50%', '25%': '25%', '0%': '0% (Р§/Р‘)' }, '100%');
+        addSelect('ym_uator', 'uator_rating_size', 'Р РѕР·РјС–СЂ Р·РЅР°С‡РєС–РІ', '', { '0.5em': 'XS', '0.8em': 'S', '1.1em': 'M (РЎС‚Р°РЅРґР°СЂС‚)', '1.5em': 'L', '2.0em': 'XL' }, '1.1em');
     }
 
     if (window.appready) createSettings();
