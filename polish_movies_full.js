@@ -1,121 +1,67 @@
 (function () {
     'use strict';
 
-    if (window.plugin_polish_movies_fixed_v5) return;
-    window.plugin_polish_movies_fixed_v5 = true;
+    if (window.plugin_polish_movies_v7) return;
+    window.plugin_polish_movies_v7 = true;
 
     var component_name = 'polish_movies';
     var component_title = 'Польське кіно';
 
     function Component(object) {
-        var scroll  = new Lampa.Scroll({mask: true, over: true});
-        var html    = $('<div></div>');
-        var body    = $('<div class="category-full"></div>');
-        var last;
-        var page    = 1;
-        var total_pages = 0;
-        var loading = false;
+        var comp = this;
 
         this.create = function () {
-            var _this = this;
+            var language = Lampa.Storage.get('language', 'uk');
 
-            this.activity.loader(true);
-            html.append(scroll.render());
-            scroll.append(body);
+            // Формуємо параметри запиту до TMDB
+            object.url = 'discover/movie?with_original_language=pl&sort_by=popularity.desc';
+            object.page = object.page || 1;
 
-            this.loadData(true);
+            // Використовуємо стандартний клас Catalog
+            this.catalog = new Lampa.Catalog(object);
 
-            return this.render();
-        };
+            // Перевизначаємо метод завантаження даних
+            this.catalog.fetch = function (url, page, resolve, reject) {
+                var req_url = url + '&page=' + page + '&language=' + language;
 
-        this.loadData = function (reset) {
-            var _this = this;
+                // Виклики через Lampa.TMDB.api або Lampa.Api.part
+                var get_data = Lampa.TMDB.api || Lampa.TMDB.get;
 
-            if (loading) return;
-            if (reset) {
-                page = 1;
-                body.empty();
-                this.activity.loader(true);
-            }
-
-            loading = true;
-
-            // Використовуємо with_original_language замість with_origin_country
-            var url = 'discover/movie?with_original_language=pl&sort_by=popularity.desc&page=' + page;
-
-            // Виклик через нативний движок Lampa TMDB
-            Lampa.TMDB.get(url, {}, function (data) {
-                _this.activity.loader(false);
-                loading = false;
-
-                if (data && data.results && data.results.length) {
-                    total_pages = data.total_pages;
-                    _this.append(data.results);
-
-                    scroll.onWheel = function (step) {
-                        if (step > 0 && !loading && page < total_pages) {
-                            page++;
-                            _this.loadData(false);
+                if (typeof get_data === 'function') {
+                    get_data(req_url, {}, function (data) {
+                        if (data && data.results && data.results.length) {
+                            resolve(data);
+                        } else {
+                            reject();
                         }
-                    };
-
-                    _this.startController();
-                } else if (reset) {
-                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; font-size: 1.2em;">Нічого не знайдено</div>');
-                    _this.startController();
-                }
-            }, function () {
-                _this.activity.loader(false);
-                loading = false;
-                if (reset) {
-                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; color: #ff5252;">Помилка завантаження даних</div>');
-                }
-            });
-        };
-
-        this.startController = function() {
-            Lampa.Controller.add('content', {
-                toggle: function () {
-                    Lampa.Controller.collectionSet(scroll.render());
-                    Lampa.Controller.collectionFocus(last || false, scroll.render());
-                },
-                left: function () {
-                    Lampa.Controller.toggle('menu');
-                }
-            });
-
-            Lampa.Controller.toggle('content');
-        };
-
-        this.append = function (data) {
-            data.forEach(function (element) {
-                var card = Lampa.Template.get('card', element);
-
-                card.on('hover:focus', function () {
-                    last = card[0];
-                    scroll.update(card);
-                });
-
-                card.on('hover:enter', function () {
-                    Lampa.Activity.push({
-                        url: element.url,
-                        component: 'full',
-                        id: element.id,
-                        method: 'movie',
-                        card: element
+                    }, function (err) {
+                        reject(err);
                     });
-                });
+                } else {
+                    // Резервний варіант через нативний Lampa.Api.sources
+                    Lampa.Api.sources.tmdb.get(req_url, {}, function (data) {
+                        if (data && data.results && data.results.length) {
+                            resolve(data);
+                        } else {
+                            reject();
+                        }
+                    }, function (err) {
+                        reject(err);
+                    });
+                }
+            };
 
-                body.append(card);
-            });
+            return this.catalog.create();
         };
 
         this.render = function () {
-            return html;
+            return this.catalog ? this.catalog.render() : $('<div></div>');
         };
 
         this.destroy = function () {
-            html.remove();
+            if (this.catalog && this.catalog.destroy) {
+                this.catalog.destroy();
+            }
         };
     }
 
