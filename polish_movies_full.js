@@ -1,13 +1,11 @@
 (function () {
-    'use strict';
-
+    'style';
     if (window.plugin_polish_movies_ready) return;
     window.plugin_polish_movies_ready = true;
 
     var component_name = 'polish_movies';
     var component_title = 'Польське кіно';
 
-    // Повний список жанрів TMDB
     var genres_list = [
         { title: 'Усі жанри', id: '' },
         { title: 'Комедія', id: '35' },
@@ -20,26 +18,18 @@
         { title: 'Детектив', id: '9648' },
         { title: 'Історичний', id: '36' },
         { title: 'Пригоди', id: '12' },
-        { title: 'Військовий', id: '10752' },
-        { title: 'Документальний', id: '99' },
-        { title: 'Фантастика', id: '878' },
-        { title: 'Анімація', id: '16' },
-        { title: 'Сімейний', id: '10751' }
+        { title: 'Військовий', id: '10752' }
     ];
 
-    // Повний список часових періодів
     var years_list = [
         { title: 'Усі роки', gte: '', lte: '' },
         { title: '2020 — 2026', gte: '2020-01-01', lte: '2026-12-31' },
         { title: '2010 — 2019', gte: '2010-01-01', lte: '2019-12-31' },
         { title: '2000 — 2009', gte: '2000-01-01', lte: '2009-12-31' },
         { title: '1990 — 1999', gte: '1990-01-01', lte: '1999-12-31' },
-        { title: '1980 — 1989', gte: '1980-01-01', lte: '1989-12-31' },
-        { title: '1970 — 1979', gte: '1970-01-01', lte: '1979-12-31' },
-        { title: 'До 1970', gte: '1900-01-01', lte: '1969-12-31' }
+        { title: 'До 1990', gte: '1900-01-01', lte: '1989-12-31' }
     ];
 
-    // Варіанти сортування
     var sort_list = [
         { title: 'За популярністю', id: 'popularity.desc' },
         { title: 'За рейтингом', id: 'vote_average.desc' },
@@ -79,7 +69,6 @@
             return this.render();
         };
 
-        // Створення випадаючих кнопок-фільтрів
         this.buildFilters = function () {
             var _this = this;
 
@@ -126,7 +115,6 @@
             filter_html.append(genre_btn).append(year_btn).append(sort_btn);
         };
 
-        // Завантаження фільмів
         this.loadData = function (reset) {
             var _this = this;
 
@@ -141,22 +129,18 @@
 
             loading = true;
 
-            var path = 'discover/movie?with_origin_country=PL&sort_by=' + selected_sort + '&vote_count.gte=5&page=' + page;
-            if (selected_genre) path += '&with_genres=' + selected_genre;
-            if (selected_year_gte) path += '&primary_release_date.gte=' + selected_year_gte;
-            if (selected_year_lte) path += '&primary_release_date.lte=' + selected_year_lte;
+            // Формуємо відносний шлях без жорстких припущень про домен
+            var url = 'discover/movie?with_origin_country=PL&sort_by=' + selected_sort + '&vote_count.gte=3&page=' + page;
+            if (selected_genre) url += '&with_genres=' + selected_genre;
+            if (selected_year_gte) url += '&primary_release_date.gte=' + selected_year_gte;
+            if (selected_year_lte) url += '&primary_release_date.lte=' + selected_year_lte;
 
-            var url = Lampa.TMDB.api(path);
+            // Використовуємо нативний метод Lampa.TMDB.list або Lampa.Api
+            var api_call = (Lampa.Api && Lampa.Api.sources && Lampa.Api.sources.tmdb) 
+                ? Lampa.Api.sources.tmdb.get 
+                : function(u, s, e) { network.silent(Lampa.TMDB.api(u), s, e); };
 
-            var request_method = function(req_url, success, error) {
-                if (Lampa.Fetch) {
-                    Lampa.Fetch.get(req_url, success, error);
-                } else {
-                    network.native(req_url, success, error);
-                }
-            };
-
-            request_method(url, function (data) {
+            api_call(url, function (data) {
                 _this.activity.loader(false);
                 loading = false;
 
@@ -180,15 +164,12 @@
                 _this.activity.loader(false);
                 loading = false;
                 if (reset) {
-                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; color: red;">Помилка завантаження даних</div>');
+                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; color: #ff5252;">Помилка завантаження даних. Перевірте з\'єднання або налаштування TMDB у Лампі.</div>');
                 }
             });
         };
 
-        // Контролер навігації пульта
         this.startController = function() {
-            var _this = this;
-
             Lampa.Controller.add('content', {
                 toggle: function () {
                     Lampa.Controller.collectionSet(scroll.render());
@@ -205,7 +186,6 @@
             Lampa.Controller.toggle('content');
         };
 
-        // Додавання карток у сітку
         this.append = function (data) {
             data.forEach(function (element) {
                 var card = Lampa.Template.get('card', element);
@@ -234,7 +214,6 @@
             return html;
         };
 
-        // Очищення ресурсів при закритті компонента
         this.destroy = function () {
             network.clear();
             items = null;
@@ -242,7 +221,6 @@
         };
     }
 
-    // Реєстрація компонента та пункту меню
     function startPlugin() {
         Lampa.Component.add(component_name, Component);
 
@@ -269,7 +247,6 @@
         });
     }
 
-    // Запуск після ініціалізації Lampa
     if (window.Lampa) {
         startPlugin();
     } else {
