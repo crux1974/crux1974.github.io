@@ -1,104 +1,113 @@
 (function () {
     'use strict';
 
-    if (window.plugin_polish_movies_v7) return;
-    window.plugin_polish_movies_v7 = true;
+    if (window.polish_tracks_plugin) return;
+    window.polish_tracks_plugin = true;
 
-    var component_name = 'polish_movies';
-    var component_title = 'Польське кіно';
+    const POLISH_CODES = ['pl', 'pol', 'polish', 'polski', 'pl-pl', 'pl_pl'];
+    const POLISH_LABEL = 'Polski';
 
-    function Component(object) {
-        var comp = this;
-
-        this.create = function () {
-            var language = Lampa.Storage.get('language', 'uk');
-
-            // Формуємо параметри запиту до TMDB
-            object.url = 'discover/movie?with_original_language=pl&sort_by=popularity.desc';
-            object.page = object.page || 1;
-
-            // Використовуємо стандартний клас Catalog
-            this.catalog = new Lampa.Catalog(object);
-
-            // Перевизначаємо метод завантаження даних
-            this.catalog.fetch = function (url, page, resolve, reject) {
-                var req_url = url + '&page=' + page + '&language=' + language;
-
-                // Виклики через Lampa.TMDB.api або Lampa.Api.part
-                var get_data = Lampa.TMDB.api || Lampa.TMDB.get;
-
-                if (typeof get_data === 'function') {
-                    get_data(req_url, {}, function (data) {
-                        if (data && data.results && data.results.length) {
-                            resolve(data);
-                        } else {
-                            reject();
-                        }
-                    }, function (err) {
-                        reject(err);
-                    });
-                } else {
-                    // Резервний варіант через нативний Lampa.Api.sources
-                    Lampa.Api.sources.tmdb.get(req_url, {}, function (data) {
-                        if (data && data.results && data.results.length) {
-                            resolve(data);
-                        } else {
-                            reject();
-                        }
-                    }, function (err) {
-                        reject(err);
-                    });
-                }
-            };
-
-            return this.catalog.create();
-        };
-
-        this.render = function () {
-            return this.catalog ? this.catalog.render() : $('<div></div>');
-        };
-
-        this.destroy = function () {
-            if (this.catalog && this.catalog.destroy) {
-                this.catalog.destroy();
-            }
-        };
+    function isPolish(track) {
+        if (!track) return false;
+        const lang = (track.language || '').toLowerCase().trim();
+        const label = (track.label || track.name || '').toLowerCase().trim();
+        return POLISH_CODES.some(c => lang === c || lang.startsWith(c + '-') || label.includes(c));
     }
 
-    function startPlugin() {
-        Lampa.Component.add(component_name, Component);
+    function improveLabel(track) {
+        if (isPolish(track)) {
+            track.label = POLISH_LABEL + (track.label && !/polski|polish|pl/i.test(track.label) ? ' — ' + track.label : '');
+            track.language = 'pl';
+        }
+        return track;
+    }
 
-        Lampa.Listener.follow('app', function (e) {
-            if (e.type == 'ready') {
-                var menu_item = $('<li class="menu__item selector" data-action="' + component_name + '">' +
-                    '<div class="menu__ico">' +
-                        '<svg height="24" viewBox="0 0 24 24" width="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11h16M4 15h16M4 7h16"/></svg>' +
-                    '</div>' +
-                    '<div class="menu__text">' + component_title + '</div>' +
-                '</li>');
+    function selectPolishIfExists(tracks) {
+        if (!Array.isArray(tracks) || !tracks.length) return tracks;
 
-                menu_item.on('hover:enter', function () {
-                    Lampa.Activity.push({
-                        url: '',
-                        title: component_title,
-                        component: component_name,
-                        page: 1
-                    });
-                });
-
-                $('.menu .menu__list').eq(0).append(menu_item);
-            }
+        let polishIndex = -1;
+        tracks.forEach((t, i) => {
+            improveLabel(t);
+            if (isPolish(t) && polishIndex === -1) polishIndex = i;
         });
+
+        if (polishIndex > -1) {
+            tracks.forEach((t, i) => {
+                t.selected = false;
+                if (typeof t.enabled !== 'undefined') t.enabled = false;
+            });
+            const chosen = tracks[polishIndex];
+            chosen.selected = true;
+            if (typeof chosen.enabled !== 'undefined') chosen.enabled = true;
+
+            // Реально перемикаємо в HTML5/video
+            try {
+                const video = Lampa.PlayerVideo.video();
+                if (video && video.audioTracks) {
+                    for (let i = 0; i < video.audioTracks.length; i++) {
+                        video.audioTracks[i].enabled = false;
+                        video.audioTracks[i].selected = false;
+                    }
+                    if (video.audioTracks[polishIndex]) {
+                        video.audioTracks[polishIndex].enabled = true;
+                        video.audioTracks[polishIndex].selected = true;
+                    }
+                }
+            } catch (e) {}
+        }
+        return tracks;
     }
 
-    if (window.Lampa) {
-        startPlugin();
-    } else {
-        var timer = setInterval(function () {
-            if (window.Lampa) {
-                clearInterval(timer);
-                startPlugin();
+    function onTracks(data) {
+        if (data && data.tracks) {
+            data.tracks = selectPolishIfExists(data.tracks);
+            if (Lampa.PlayerPanel && Lampa.PlayerPanel.setTracks) {
+                Lampa.PlayerPanel.setTracks(data.tracks);
             }
-        }, 100);
+        }
+    }
+
+    function onWebosTracks(data) {
+        if (data && data.tracks) {
+            data.tracks = selectPolishIfExists(data.tracks);
+        }
+    }
+
+    function init() {
+        Lampa.Player.listener.follow('start', function () {
+            // Підписуємось на появу доріжок
+            Lampa.PlayerVideo.listener.follow('tracks', onTracks);
+            Lampa.PlayerVideo.listener.follow('webos_tracks', onWebosTracks);
+            Lampa.PlayerVideo.listener.follow('canplay', function () {
+                // На всяк випадок ще раз після canplay
+                setTimeout(() => {
+                    try {
+                        const video = Lampa.PlayerVideo.video();
+                        if (video && video.audioTracks && video.audioTracks.length) {
+                            const arr = Array.from(video.audioTracks);
+                            selectPolishIfExists(arr);
+                            if (Lampa.PlayerPanel && Lampa.PlayerPanel.setTracks) {
+                                Lampa.PlayerPanel.setTracks(arr);
+                            }
+                        }
+                    } catch (e) {}
+                }, 800);
+            });
+        });
+
+        Lampa.Player.listener.follow('destroy', function () {
+            Lampa.PlayerVideo.listener.remove('tracks', onTracks);
+            Lampa.PlayerVideo.listener.remove('webos_tracks', onWebosTracks);
+        });
+
+        console.log('[Polish Tracks] Plugin loaded');
+    }
+
+    if (window.appready) {
+        init();
+    } else {
+        Lampa.Listener.follow('app', function (e) {
+            if (e.type === 'ready') init();
+        });
     }
 })();
