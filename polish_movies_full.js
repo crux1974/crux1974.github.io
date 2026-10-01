@@ -1,113 +1,102 @@
 (function () {
     'use strict';
 
-    if (window.polish_tracks_plugin) return;
-    window.polish_tracks_plugin = true;
+    // Уникаємо повторного завантаження
+    if (window.polish_voice_plugin) return;
+    window.polish_voice_plugin = true;
 
-    const POLISH_CODES = ['pl', 'pol', 'polish', 'polski', 'pl-pl', 'pl_pl'];
-    const POLISH_LABEL = 'Polski';
-
-    function isPolish(track) {
-        if (!track) return false;
-        const lang = (track.language || '').toLowerCase().trim();
-        const label = (track.label || track.name || '').toLowerCase().trim();
-        return POLISH_CODES.some(c => lang === c || lang.startsWith(c + '-') || label.includes(c));
-    }
-
-    function improveLabel(track) {
-        if (isPolish(track)) {
-            track.label = POLISH_LABEL + (track.label && !/polski|polish|pl/i.test(track.label) ? ' — ' + track.label : '');
-            track.language = 'pl';
-        }
-        return track;
-    }
-
-    function selectPolishIfExists(tracks) {
-        if (!Array.isArray(tracks) || !tracks.length) return tracks;
-
-        let polishIndex = -1;
-        tracks.forEach((t, i) => {
-            improveLabel(t);
-            if (isPolish(t) && polishIndex === -1) polishIndex = i;
+    function startPlugin() {
+        // Реєстрація плагіна
+        Lampa.Plugin.add({
+            name: 'Polish Voice',
+            version: '1.0.0',
+            description: 'Фільтр і пріоритет польської озвучки (lektor PL)',
+            author: 'User'
         });
 
-        if (polishIndex > -1) {
-            tracks.forEach((t, i) => {
-                t.selected = false;
-                if (typeof t.enabled !== 'undefined') t.enabled = false;
-            });
-            const chosen = tracks[polishIndex];
-            chosen.selected = true;
-            if (typeof chosen.enabled !== 'undefined') chosen.enabled = true;
-
-            // Реально перемикаємо в HTML5/video
-            try {
-                const video = Lampa.PlayerVideo.video();
-                if (video && video.audioTracks) {
-                    for (let i = 0; i < video.audioTracks.length; i++) {
-                        video.audioTracks[i].enabled = false;
-                        video.audioTracks[i].selected = false;
-                    }
-                    if (video.audioTracks[polishIndex]) {
-                        video.audioTracks[polishIndex].enabled = true;
-                        video.audioTracks[polishIndex].selected = true;
-                    }
-                }
-            } catch (e) {}
-        }
-        return tracks;
-    }
-
-    function onTracks(data) {
-        if (data && data.tracks) {
-            data.tracks = selectPolishIfExists(data.tracks);
-            if (Lampa.PlayerPanel && Lampa.PlayerPanel.setTracks) {
-                Lampa.PlayerPanel.setTracks(data.tracks);
+        // Додаємо пункт у меню налаштувань (опційно)
+        Lampa.SettingsApi.addParam({
+            component: 'interface',
+            param: {
+                name: 'polish_voice_priority',
+                type: 'trigger',
+                default: true
+            },
+            field: {
+                name: 'Пріоритет польської озвучки',
+                description: 'Піднімати джерела з PL / lektor вище'
+            },
+            onChange: function (value) {
+                Lampa.Storage.set('polish_voice_priority', value);
             }
-        }
-    }
+        });
 
-    function onWebosTracks(data) {
-        if (data && data.tracks) {
-            data.tracks = selectPolishIfExists(data.tracks);
-        }
-    }
+        // Слухаємо відкриття картки фільму/серіалу
+        Lampa.Listener.follow('full', function (e) {
+            if (e.type !== 'complite') return;
 
-    function init() {
-        Lampa.Player.listener.follow('start', function () {
-            // Підписуємось на появу доріжок
-            Lampa.PlayerVideo.listener.follow('tracks', onTracks);
-            Lampa.PlayerVideo.listener.follow('webos_tracks', onWebosTracks);
-            Lampa.PlayerVideo.listener.follow('canplay', function () {
-                // На всяк випадок ще раз після canplay
-                setTimeout(() => {
-                    try {
-                        const video = Lampa.PlayerVideo.video();
-                        if (video && video.audioTracks && video.audioTracks.length) {
-                            const arr = Array.from(video.audioTracks);
-                            selectPolishIfExists(arr);
-                            if (Lampa.PlayerPanel && Lampa.PlayerPanel.setTracks) {
-                                Lampa.PlayerPanel.setTracks(arr);
-                            }
-                        }
-                    } catch (e) {}
-                }, 800);
+            // Приклад: додаємо власну кнопку "Polish"
+            var button = $(`
+                <div class="full-start__button selector view--polish">
+                    <svg>...</svg>  <!-- іконка -->
+                    <span>Polish / PL</span>
+                </div>
+            `);
+
+            button.on('hover:enter', function () {
+                // Тут твоя логіка пошуку джерел з польською озвучкою
+                // Наприклад, виклик існуючого балансера + фільтр
+                searchPolishSources(e.data.movie);
             });
+
+            $('.full-start__buttons', e.object.activity.render()).prepend(button);
         });
 
-        Lampa.Player.listener.follow('destroy', function () {
-            Lampa.PlayerVideo.listener.remove('tracks', onTracks);
-            Lampa.PlayerVideo.listener.remove('webos_tracks', onWebosTracks);
-        });
+        // Приклад функції фільтрації (псевдокод)
+        function searchPolishSources(movie) {
+            Lampa.Noty.show('Шукаю джерела з польською озвучкою...');
 
-        console.log('[Polish Tracks] Plugin loaded');
+            // Тут ти підключаєш свій балансер / API
+            // і фільтруєш результати за ключовими словами:
+            // "PL", "Polish", "Lektor", "Lektor PL", "Dubbing PL" тощо.
+
+            /*
+            Lampa.Api.request(url, function (data) {
+                var filtered = data.filter(item => {
+                    var title = (item.title || item.quality || item.voice || '').toLowerCase();
+                    return title.includes('pl') || title.includes('lektor') || title.includes('polish');
+                });
+
+                // Показуємо результати через стандартний компонент Lampa
+                Lampa.Component.get('files')({
+                    data: filtered,
+                    movie: movie
+                });
+            });
+            */
+        }
+
+        // Пріоритет у списку онлайн-джерел (якщо балансер підтримує)
+        Lampa.Listener.follow('online', function (e) {
+            if (!Lampa.Storage.get('polish_voice_priority', true)) return;
+
+            if (e.type === 'balance') {
+                // Сортуємо балансери / файли, піднімаючи ті, що містять PL
+                e.data.sort(function (a, b) {
+                    var aPl = /pl|polish|lektor/i.test(a.title || a.quality || '');
+                    var bPl = /pl|polish|lektor/i.test(b.title || b.quality || '');
+                    return (bPl ? 1 : 0) - (aPl ? 1 : 0);
+                });
+            }
+        });
     }
 
+    // Запуск після готовності додатку
     if (window.appready) {
-        init();
+        startPlugin();
     } else {
         Lampa.Listener.follow('app', function (e) {
-            if (e.type === 'ready') init();
+            if (e.type === 'ready') startPlugin();
         });
     }
 })();
