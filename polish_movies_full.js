@@ -1,5 +1,6 @@
 (function () {
-    'style';
+    'use strict';
+
     if (window.plugin_polish_movies_ready) return;
     window.plugin_polish_movies_ready = true;
 
@@ -15,10 +16,7 @@
         { title: 'Кримінал', id: '80' },
         { title: 'Жахи', id: '27' },
         { title: 'Мелодрама', id: '10749' },
-        { title: 'Детектив', id: '9648' },
-        { title: 'Історичний', id: '36' },
-        { title: 'Пригоди', id: '12' },
-        { title: 'Військовий', id: '10752' }
+        { title: 'Детектив', id: '9648' }
     ];
 
     var years_list = [
@@ -26,19 +24,16 @@
         { title: '2020 — 2026', gte: '2020-01-01', lte: '2026-12-31' },
         { title: '2010 — 2019', gte: '2010-01-01', lte: '2019-12-31' },
         { title: '2000 — 2009', gte: '2000-01-01', lte: '2009-12-31' },
-        { title: '1990 — 1999', gte: '1990-01-01', lte: '1999-12-31' },
-        { title: 'До 1990', gte: '1900-01-01', lte: '1989-12-31' }
+        { title: 'До 2000', gte: '1900-01-01', lte: '1999-12-31' }
     ];
 
     var sort_list = [
         { title: 'За популярністю', id: 'popularity.desc' },
         { title: 'За рейтингом', id: 'vote_average.desc' },
-        { title: 'Спочатку нові', id: 'primary_release_date.desc' },
-        { title: 'Спочатку старі', id: 'primary_release_date.asc' }
+        { title: 'Спочатку нові', id: 'primary_release_date.desc' }
     ];
 
     function Component(object) {
-        var network = new Lampa.Reguest();
         var scroll  = new Lampa.Scroll({mask: true, over: true});
         var items   = [];
         var html    = $('<div></div>');
@@ -129,18 +124,13 @@
 
             loading = true;
 
-            // Формуємо відносний шлях без жорстких припущень про домен
-            var url = 'discover/movie?with_origin_country=PL&sort_by=' + selected_sort + '&vote_count.gte=3&page=' + page;
+            var url = 'discover/movie?with_origin_country=PL&sort_by=' + selected_sort + '&page=' + page;
             if (selected_genre) url += '&with_genres=' + selected_genre;
             if (selected_year_gte) url += '&primary_release_date.gte=' + selected_year_gte;
             if (selected_year_lte) url += '&primary_release_date.lte=' + selected_year_lte;
 
-            // Використовуємо нативний метод Lampa.TMDB.list або Lampa.Api
-            var api_call = (Lampa.Api && Lampa.Api.sources && Lampa.Api.sources.tmdb) 
-                ? Lampa.Api.sources.tmdb.get 
-                : function(u, s, e) { network.silent(Lampa.TMDB.api(u), s, e); };
-
-            api_call(url, function (data) {
+            // Нативний прямий метод Lampa для каталогу
+            Lampa.TMDB.get(url, {}, function (data) {
                 _this.activity.loader(false);
                 loading = false;
 
@@ -157,14 +147,14 @@
 
                     _this.startController();
                 } else if (reset) {
-                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; font-size: 1.2em;">За вашим запитом нічого не знайдено</div>');
+                    body.append('<div class="empty__title" style="padding: 3em; text-align: center;">Нічого не знайдено</div>');
                     _this.startController();
                 }
             }, function () {
                 _this.activity.loader(false);
                 loading = false;
                 if (reset) {
-                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; color: #ff5252;">Помилка завантаження даних. Перевірте з\'єднання або налаштування TMDB у Лампі.</div>');
+                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; color: red;">Помилка мережі TMDB</div>');
                 }
             });
         };
@@ -177,9 +167,6 @@
                 },
                 left: function () {
                     Lampa.Controller.toggle('menu');
-                },
-                up: function () {
-                    if (navigator.app) navigator.app.exitApp();
                 }
             });
 
@@ -215,7 +202,6 @@
         };
 
         this.destroy = function () {
-            network.clear();
             items = null;
             html.remove();
         };
