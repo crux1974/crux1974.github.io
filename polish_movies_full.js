@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    if (window.plugin_polish_movies_v4) return;
-    window.plugin_polish_movies_v4 = true;
+    if (window.plugin_polish_movies_fixed_v5) return;
+    window.plugin_polish_movies_fixed_v5 = true;
 
     var component_name = 'polish_movies';
     var component_title = 'Польське кіно';
@@ -40,8 +40,11 @@
 
             loading = true;
 
-            // Використовуємо внутрішній движок Lampa для TMDB Discover
-            Lampa.Api.part('discover/movie?with_origin_country=PL&sort_by=popularity.desc&page=' + page, {}, function (data) {
+            // Використовуємо with_original_language замість with_origin_country
+            var url = 'discover/movie?with_original_language=pl&sort_by=popularity.desc&page=' + page;
+
+            // Виклик через нативний движок Lampa TMDB
+            Lampa.TMDB.get(url, {}, function (data) {
                 _this.activity.loader(false);
                 loading = false;
 
@@ -58,14 +61,14 @@
 
                     _this.startController();
                 } else if (reset) {
-                    body.append('<div class="empty__title" style="padding: 3em; text-align: center;">Нічого не знайдено</div>');
+                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; font-size: 1.2em;">Нічого не знайдено</div>');
                     _this.startController();
                 }
             }, function () {
                 _this.activity.loader(false);
                 loading = false;
                 if (reset) {
-                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; color: #ff5252;">Помилка! Перевірте Проксі TMDB у Налаштуваннях Лампи</div>');
+                    body.append('<div class="empty__title" style="padding: 3em; text-align: center; color: #ff5252;">Помилка завантаження даних</div>');
                 }
             });
         };
