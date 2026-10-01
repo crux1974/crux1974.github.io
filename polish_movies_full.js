@@ -29,21 +29,14 @@
         { title: 'До 1990', gte: '1900-01-01', lte: '1989-12-31' }
     ];
 
-    // Опції сортування
-    var sort_list = [
-        { title: 'За популярністю', id: 'popularity.desc' },
-        { title: 'За рейтингом (високий спочатку)', id: 'vote_average.desc' },
-        { title: 'Спочатку нові', id: 'primary_release_date.desc' },
-        { title: 'Спочатку старі', id: 'primary_release_date.asc' }
-    ];
-
     function Component(object) {
         var network = new Lampa.Reguest();
         var scroll  = new Lampa.Scroll({mask: true, over: true});
         var items   = [];
         var html    = $('<div></div>');
         var body    = $('<div class="category-full"></div>');
-        var filter_html = $('<div class="broad-filter" style="padding: 1em; display: flex; gap: 10px; flex-wrap: wrap;"></div>');
+        var filter_html = $('<div class="broad-filter" style="padding: 1em; display: flex; gap: 10px;"></div>');
+        var info;
         var last;
         var page    = 1;
         var total_pages = 0;
@@ -52,7 +45,6 @@
         var selected_genre = '';
         var selected_year_gte = '';
         var selected_year_lte = '';
-        var selected_sort = 'popularity.desc';
 
         this.create = function () {
             var _this = this;
@@ -73,7 +65,7 @@
         this.buildFilters = function () {
             var _this = this;
 
-            // Кнопка жанру
+            // Кнопка вибору жанру
             var genre_btn = $('<div class="selector filter-btn" style="padding: 0.5em 1em; background: rgba(255,255,255,0.1); border-radius: 4px;">Жанр: Усі жанри</div>');
             genre_btn.on('hover:enter', function () {
                 Lampa.Select.show({
@@ -87,7 +79,7 @@
                 });
             });
 
-            // Кнопка року
+            // Кнопка вибору року
             var year_btn = $('<div class="selector filter-btn" style="padding: 0.5em 1em; background: rgba(255,255,255,0.1); border-radius: 4px;">Рік: Усі роки</div>');
             year_btn.on('hover:enter', function () {
                 Lampa.Select.show({
@@ -102,24 +94,10 @@
                 });
             });
 
-            // Кнопка сортування
-            var sort_btn = $('<div class="selector filter-btn" style="padding: 0.5em 1em; background: rgba(255,255,255,0.1); border-radius: 4px;">Сортування: За популярністю</div>');
-            sort_btn.on('hover:enter', function () {
-                Lampa.Select.show({
-                    title: 'Тип сортування',
-                    items: sort_list,
-                    onSelect: function (a) {
-                        selected_sort = a.id;
-                        sort_btn.text('Сортування: ' + a.title);
-                        _this.loadData(true);
-                    }
-                });
-            });
-
-            filter_html.append(genre_btn).append(year_btn).append(sort_btn);
+            filter_html.append(genre_btn).append(year_btn);
         };
 
-        // Завантаження даних із TMDB
+        // Завантаження даних із TMDB з урахуванням фільтрів
         this.loadData = function (reset) {
             var _this = this;
 
@@ -130,8 +108,7 @@
                 this.activity.loader(true);
             }
 
-            // Щоб уникнути показу низькоякісних тайтлів при сортуванні за рейтингом, додаємо обмеження за голосами (vote_count.gte=10)
-            var url = 'discover/movie?with_origin_country=PL&sort_by=' + selected_sort + '&vote_count.gte=10&page=' + page;
+            var url = 'discover/movie?with_origin_country=PL&sort_by=popularity.desc&page=' + page;
             if (selected_genre) url += '&with_genres=' + selected_genre;
             if (selected_year_gte) url += '&primary_release_date.gte=' + selected_year_gte;
             if (selected_year_lte) url += '&primary_release_date.lte=' + selected_year_lte;
@@ -143,6 +120,7 @@
                     total_pages = data.total_pages;
                     _this.append(data.results);
 
+                    // Налаштування скролінгу та підвантаження
                     scroll.onWheel = function (step) {
                         if (step > 0 && !network.isWork() && page < total_pages) {
                             page++;
