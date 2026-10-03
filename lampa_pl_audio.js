@@ -4,7 +4,7 @@
     if (window.plugin_pl_audio_loaded) return;
     window.plugin_pl_audio_loaded = true;
 
-    // Налаштування плагіна Lampa
+    // Налаштування плагіна
     Lampa.SettingsApi.addParam({
         component: 'plugins',
         param: {
@@ -13,72 +13,39 @@
             default: true
         },
         field: {
-            name: 'Польська озвучка (Polski Lektor/Dubbing)',
-            description: 'Пошук польського аудіо та субтитрів'
+            name: 'Польська озвучка (Polski Lektor)',
+            description: 'Відображати кнопку польської озвучки'
         },
         onChange: function (value) {
             Lampa.Storage.set('pl_audio_source', value);
         }
     });
 
-    // Модуль пошуку потоків з польським лектором/дубляжем
+    // Компонент відображення результатів
     function PolishAudioProvider(object) {
-        var network = new Lampa.Reguest();
         var scroll = new Lampa.Scroll({ mask: true, over: true });
-        var files = new Lampa.Files();
-        var filter = new Lampa.Filter(object);
-        var results = [];
-
-        this.search = function (title, year, season, episode) {
-            var query = encodeURIComponent(title);
-            var searchUrl = 'https://cda.pl/info/' + query; // Приклад запиту до польської бази/CDA
-
-            network.silent(searchUrl, function (json) {
-                // Парсинг та створення переліку варіантів озвучки
-                results = [
-                    {
-                        title: title + ' (Lektor PL)',
-                        quality: '1080p',
-                        translation: 'Polski Lektor',
-                        url: 'https://example-pl-stream.com/video_lektor.mp4'
-                    },
-                    {
-                        title: title + ' (Dubbing PL)',
-                        quality: '1080p',
-                        translation: 'Polski Dubbing',
-                        url: 'https://example-pl-stream.com/video_dubbing.mp4'
-                    },
-                    {
-                        title: title + ' (Napisy PL)',
-                        quality: '1080p',
-                        translation: 'Polski Subtitles',
-                        url: 'https://example-pl-stream.com/video_sub.mp4'
-                    }
-                ];
-
-                renderResults(results);
-            }, function () {
-                renderEmpty();
-            });
-        };
-
-        function renderResults(items) {
+        
+        this.create = function () {
             var html = $('<div class="online-list"></div>');
+            var cardTitle = object.search_title || 'Фільм';
 
-            items.forEach(function (item) {
+            var results = [
+                { title: cardTitle + ' (Lektor PL 1080p)', url: 'https://example-pl-stream.com/lektor.mp4' },
+                { title: cardTitle + ' (Dubbing PL 1080p)', url: 'https://example-pl-stream.com/dubbing.mp4' },
+                { title: cardTitle + ' (Napisy PL / Субтитри)', url: 'https://example-pl-stream.com/napisy.mp4' }
+            ];
+
+            results.forEach(function (item) {
                 var element = $(
                     '<div class="online-list__item selector">' +
                         '<div class="online-list__title">' + item.title + '</div>' +
-                        '<div class="online-list__quality">' + item.quality + ' | ' + item.translation + '</div>' +
                     '</div>'
                 );
 
                 element.on('hover:enter', function () {
-                    // Запуск програвача Lampa з вибраним польським аудіопотоком
                     Lampa.Player.play({
                         url: item.url,
-                        title: item.title,
-                        subtitles: item.subtitles || []
+                        title: item.title
                     });
                 });
 
@@ -86,45 +53,62 @@
             });
 
             scroll.append(html);
-        }
-
-        function renderEmpty() {
-            var empty = $('<div class="empty">Brak polskich źródeł (Не знайдено польських джерел)</div>');
-            scroll.append(empty);
-        }
+            return scroll.render();
+        };
 
         this.destroy = function () {
-            network.clear();
+            scroll.destroy();
         };
     }
 
-    // Реєстрація джерела у відеобалансерах Lampa 3.3.4.29
     Lampa.Component.add('pl_audio', PolishAudioProvider);
 
+    // Додавання кнопки на картку
+    function addButton(e) {
+        if (!Lampa.Storage.get('pl_audio_source', true)) return;
+
+        var card = e.object.method === 'movie' ? e.object.movie : e.object.tv;
+        if (!card) return;
+
+        var buttonHtml = $(
+            '<div class="full-start__button selector button--pl-audio">' +
+                '<svg height="24" viewBox="0 0 24 24" width="24" fill="currentColor">' +
+                    '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' +
+                '</svg>' +
+                '<span>PL Lektor</span>' +
+            '</div>'
+        );
+
+        buttonHtml.on('hover:enter', function () {
+            Lampa.Activity.push({
+                url: '',
+                title: 'PL Lektor - ' + (card.title || card.name),
+                component: 'pl_audio',
+                search_title: card.original_title || card.title || card.name,
+                year: (card.release_date || card.first_air_date || '').substring(0, 4)
+            });
+        });
+
+        // Шукаємо контейнер для кнопок (підтримка старих і нових версій Lampa)
+        var container = e.body.find('.full-start__buttons, .full-start-new__buttons, .full-start__controls').first();
+
+        if (container.length) {
+            container.append(buttonHtml);
+        } else {
+            // Якщо контейнер не знайдено одразу, очікуємо появи в DOM
+            setTimeout(function () {
+                var retryContainer = e.body.find('.full-start__buttons, .full-start-new__buttons, .full-start__controls').first();
+                if (retryContainer.length) {
+                    retryContainer.append(buttonHtml);
+                }
+            }, 300);
+        }
+    }
+
+    // Підписка на події відкриття картки
     Lampa.Listener.follow('full', function (e) {
         if (e.type === 'start') {
-            var card = e.object.method === 'movie' ? e.object.movie : e.object.tv;
-            // Додаємо кнопку "Polski Lektor" на картку фільму/серіалу
-            var button = $(
-                '<div class="full-start__button selector button--pl-audio">' +
-                    '<svg height="24" viewBox="0 0 24 24" width="24" fill="currentColor">' +
-                        '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>' +
-                    '</svg>' +
-                    '<span>PL Lektor / Dubbing</span>' +
-                '</div>'
-            );
-
-            button.on('hover:enter', function () {
-                Lampa.Activity.push({
-                    url: '',
-                    title: 'Polski Lektor - ' + (card.title || card.name),
-                    component: 'pl_audio',
-                    search_title: card.original_title || card.title || card.name,
-                    year: card.release_date || card.first_air_date
-                });
-            });
-
-            e.body.find('.full-start__buttons').append(button);
+            addButton(e);
         }
     });
 
