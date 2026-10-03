@@ -1,132 +1,103 @@
 (function () {
     'use strict';
 
-    if (window.plugin_pl_marks_loaded) return;
-    window.plugin_pl_marks_loaded = true;
+    if (window.plugin_pl_marks_v2_loaded) return;
+    window.plugin_pl_marks_v2_loaded = true;
 
-    // Стилі для міток на постерах
-    var styles = `
-        .card__pl-mark {
-            position: absolute;
-            top: 0.4em;
-            right: 0.4em;
-            background: rgba(220, 53, 69, 0.9);
-            color: #fff;
-            padding: 0.15em 0.4em;
-            border-radius: 0.3em;
-            font-size: 0.7em;
-            font-weight: bold;
-            z-index: 5;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            letter-spacing: 0.5px;
-        }
-        .card__pl-mark--sub {
-            background: rgba(40, 167, 69, 0.9);
-        }
-        .card__pl-mark-flag {
-            width: 12px;
-            height: 9px;
-            background: linear-gradient(to bottom, #ffffff 50%, #dc3545 50%);
-            border-radius: 1px;
-            display: inline-block;
-            border: 1px solid rgba(0,0,0,0.2);
-        }
+    // Впровадження стилів для мітки
+    var styleHtml = `
+        <style id="pl-marks-styles">
+            .card__pl-badge {
+                position: absolute !important;
+                top: 6px !important;
+                right: 6px !important;
+                background: #dc3545 !important;
+                color: #ffffff !important;
+                padding: 2px 6px !important;
+                border-radius: 4px !important;
+                font-size: 10px !important;
+                font-weight: bold !important;
+                z-index: 10 !important;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.7) !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 4px !important;
+                line-height: 1.2 !important;
+                pointer-events: none !important;
+            }
+            .card__pl-flag {
+                width: 10px;
+                height: 7px;
+                background: linear-gradient(to bottom, #ffffff 50%, #dc3545 50%);
+                border: 1px solid rgba(0,0,0,0.3);
+                border-radius: 1px;
+                display: inline-block;
+            }
+        </style>
     `;
+    $('head').append(styleHtml);
 
-    var styleSheet = document.createElement("style");
-    styleSheet.innerText = styles;
-    document.head.appendChild(styleSheet);
+    // Функція аналізу даних фільму/серіалу
+    function hasPolishAudio(data) {
+        if (!data) return false;
 
-    // Додавання налаштувань у меню Lampa
-    Lampa.SettingsApi.addParam({
-        component: 'plugins',
-        param: {
-            name: 'pl_marks_enable',
-            type: 'trigger',
-            default: true
-        },
-        field: {
-            name: 'Мітки PL на постерах',
-            description: 'Показувати плашку PL Lektor/Dubbing на картках'
-        },
-        onChange: function (value) {
-            Lampa.Storage.set('pl_marks_enable', value);
-        }
-    });
+        var title = (data.title || data.name || '').toLowerCase();
+        var originalTitle = (data.original_title || data.original_name || '').toLowerCase();
+        var origLang = (data.original_language || '').toLowerCase();
 
-    // Список мовних кодів та країнознавчих тегів Польщі
-    var POLISH_ISO_CODES = ['pl', 'pol', 'polski', 'pl-pl'];
-    var POLISH_COUNTRIES = ['PL', 'Poland', 'Polska'];
+        // 1. Якщо фільм польського виробництва
+        if (origLang === 'pl' || origLang === 'pol') return 'PL';
 
-    // Перевірка наявності польської озвучки або субтитрів у медіаданих
-    function checkPolishAudio(data) {
-        if (!data) return null;
-
-        // 1. Перевірка оригінальної мови
-        if (POLISH_ISO_CODES.indexOf((data.original_language || '').toLowerCase()) !== -1) {
-            return { type: 'audio', label: 'PL' };
-        }
-
-        // 2. Перевірка країни виробництва
+        // 2. Перевірка країни
         if (data.production_countries && Array.isArray(data.production_countries)) {
-            var isPlCountry = data.production_countries.some(function (c) {
-                return POLISH_COUNTRIES.indexOf(c.iso_3166_1) !== -1 || POLISH_COUNTRIES.indexOf(c.name) !== -1;
+            var isPl = data.production_countries.some(function (c) {
+                return c.iso_3166_1 === 'PL' || c.name === 'Poland';
             });
-            if (isPlCountry) return { type: 'audio', label: 'PL' };
+            if (isPl) return 'PL';
         }
 
-        // 3. Перевірка аудіодоріжок / перекладів (якщо віддаються балансером або TMDB)
-        if (data.spoken_languages && Array.isArray(data.spoken_languages)) {
-            var hasPlAudio = data.spoken_languages.some(function (l) {
-                return POLISH_ISO_CODES.indexOf((l.iso_639_1 || '').toLowerCase()) !== -1;
-            });
-            if (hasPlAudio) return { type: 'audio', label: 'PL Lektor' };
+        // 3. Перевірка ключів у назві (корисно для баз з озвучками та торентів)
+        var plKeywords = ['lektor pl', 'dubbing pl', 'napisy pl', 'polski', 'pl sub', 'pl audio'];
+        for (var i = 0; i < plKeywords.length; i++) {
+            if (title.indexOf(plKeywords[i]) !== -1 || originalTitle.indexOf(plKeywords[i]) !== -1) {
+                return 'PL';
+            }
         }
 
-        // 4. Перевірка альтернативних назв чи тегів озвучки
-        if (data.translations && Array.isArray(data.translations)) {
-            var hasPlTranslation = data.translations.some(function (t) {
-                return POLISH_ISO_CODES.indexOf((t.iso_639_1 || '').toLowerCase()) !== -1;
-            });
-            if (hasPlTranslation) return { type: 'audio', label: 'PL' };
-        }
-
-        return null;
+        return false;
     }
 
-    // Реплікація додавання мітки на DOM-елемент картки
-    function attachMark(cardElement, markInfo) {
-        if (!cardElement || cardElement.find('.card__pl-mark').length) return;
+    // Додавання бейджа на постер
+    function applyBadge(node, label) {
+        var $node =$(node);
+        if ($node.find('.card__pl-badge').length) return;
 
-        var view = cardElement.find('.card__view, .card__img, .card__cover').first();
-        if (!view.length) view = cardElement;
+        var target = $node.find('.card__view, .card__img, .card__cover, .img-box').first();
+        if (!target.length) target = $node;
 
-        var markHtml = $(
-            '<div class="card__pl-mark' + (markInfo.type === 'sub' ? ' card__pl-mark--sub' : '') + '">' +
-                '<span class="card__pl-mark-flag"></span>' +
-                '<span>' + markInfo.label + '</span>' +
+        target.css('position', 'relative');
+        
+        var badge = $(
+            '<div class="card__pl-badge">' +
+                '<span class="card__pl-flag"></span>' +
+                '<span>' + label + '</span>' +
             '</div>'
         );
 
-        view.css('position', 'relative').append(markHtml);
+        target.append(badge);
     }
 
-    // Підписка на малювання карток (Card Render) у Lampa 3.3.4.29
+    // Слухач подій Lampa 3.3.4.29
     Lampa.Listener.follow('card', function (e) {
-        if (e.type === 'visible' || e.type === 'build') {
-            if (!Lampa.Storage.get('pl_marks_enable', true)) return;
+        if (e.type === 'build' || e.type === 'visible') {
+            var data = e.card || e.data || (e.object ? e.object.data : null);
+            var node = e.node || (e.object ? e.object.node : null);
 
-            var cardData = e.data || (e.object ? e.object.data : null);
-            var cardNode = e.node || (e.object ? e.object.node : null);
-
-            if (!cardData || !cardNode) return;
-
-            var mark = checkPolishAudio(cardData);
-            if (mark) {
-                attachMark($(cardNode), mark);
+            if (data && node) {
+                var badgeLabel = hasPolishAudio(data);
+                if (badgeLabel) {
+                    applyBadge(node, badgeLabel);
+                }
             }
         }
     });
